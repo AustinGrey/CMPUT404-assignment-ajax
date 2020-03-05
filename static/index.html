@@ -32,7 +32,24 @@ var W = canvas.width  = window.innerWidth-6;
 var H = canvas.height = window.innerHeight-50;
 
 
+// UUID generator MIT licensed by Joao Victor https://codepen.io/Jvsierra/pen/BNbEjW
+function create_uuid() {
+    function s4() {
+        return Math.floor((1 + Math.random()) * 0x10000)
+            .toString(16)
+            .substring(1);
+    }
+    return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+        s4() + '-' + s4() + s4() + s4();
+}
+
+var uuid = create_uuid();
+
+
 function sendJSONXMLHTTPRequest(url, objects, callback) {
+    // Always include the uuid of this browser session
+    objects.uuid = uuid;
+
     var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function () {
         if (xhr.readyState==4) {
@@ -66,7 +83,7 @@ function sendJSONXMLHTTPRequest(url, objects, callback) {
 
 world = {};
 
-//DONE: TODO Make this prettier!
+//DONE: Make this prettier!
 function drawCircle(context,entity) {
     with(context) {
         beginPath();
@@ -275,7 +292,7 @@ mouse = (function() {
 })();
 
 // Add the application specific mouse listeners!
-//DONE: TODO Make these prettier!
+//DONE: Make these prettier!
 mouse.mousedowners.push(function(x,y,clicked,e) {
     addEntityWithoutName({'x':x,'y':y,'colour':'rgba(0, 0, 255, 0.2)','radius':10});
 });
@@ -290,9 +307,23 @@ mouse.mousedraggers.push(function(x,y,clicked,e) {
 
 
 function update() {
-    //DONE: TODO Get the world from the webservice using a XMLHTTPRequest
+    //DONE: Get the world from the webservice using a XMLHTTPRequest DEPRECATED. I am instead getting the queue for this
+    //specific uuid
+
+    // sendJSONXMLHTTPRequest(
+    //     '/world',
+    //     {},
+    //     resp=>{
+    //         //done: Modify the world based on the response
+    //         for(let entity in resp){
+    //             world[entity] = resp[entity]
+    //         }
+    //         drawNextFrame()
+    //     }
+    // );
+
     sendJSONXMLHTTPRequest(
-        '/world',
+        `/get_updates/${uuid}`,
         {},
         resp=>{
             //done: Modify the world based on the response
