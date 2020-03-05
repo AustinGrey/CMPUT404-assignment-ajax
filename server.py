@@ -120,8 +120,6 @@ def hello():
 def update(entity):
     '''update the entities via this interface'''
     post_vars = flask_post_json()
-    if 'uuid' in post_vars:
-        myWorld.register_queue(post_vars['uuid'])
 
     myWorld.set(entity, post_vars)
     return jsonify(myWorld.get(entity))
@@ -149,6 +147,16 @@ def get_queue(queue_id):
     Also clears the queue
     '''
     return jsonify(myWorld.queue(queue_id))
+
+@app.route("/register_queue", methods=['POST'])
+def register_queue():
+    '''
+    Register a queue into the system
+    '''
+    post_vars = flask_post_json()
+    if 'uuid' in post_vars:
+        myWorld.register_queue(post_vars['uuid'])
+    return jsonify({'success': 'Queue created'})
 
 # @app.route('/register/<queue_id>', methods=['GET'])
 # def register_queue(queue_id):

@@ -45,11 +45,7 @@ function create_uuid() {
 
 var uuid = create_uuid();
 
-
 function sendJSONXMLHTTPRequest(url, objects, callback) {
-    // Always include the uuid of this browser session
-    objects.uuid = uuid;
-
     var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function () {
         if (xhr.readyState==4) {
@@ -79,6 +75,15 @@ function sendJSONXMLHTTPRequest(url, objects, callback) {
 
     // Remember to use application/json !
 }
+
+// We need to let the server know that we would like to start a queue to observe updates
+sendJSONXMLHTTPRequest(
+    '/register_queue',
+    {
+        uuid: uuid
+    },
+    ()=>{}
+);
 
 
 world = {};
@@ -307,20 +312,8 @@ mouse.mousedraggers.push(function(x,y,clicked,e) {
 
 
 function update() {
-    //DONE: Get the world from the webservice using a XMLHTTPRequest DEPRECATED. I am instead getting the queue for this
-    //specific uuid
-
-    // sendJSONXMLHTTPRequest(
-    //     '/world',
-    //     {},
-    //     resp=>{
-    //         //done: Modify the world based on the response
-    //         for(let entity in resp){
-    //             world[entity] = resp[entity]
-    //         }
-    //         drawNextFrame()
-    //     }
-    // );
+    //DONE: Get the world from the webservice using a XMLHTTPRequest DEPRECATED.
+    // I am instead getting the queue for this specific uuid
 
     sendJSONXMLHTTPRequest(
         `/get_updates/${uuid}`,
